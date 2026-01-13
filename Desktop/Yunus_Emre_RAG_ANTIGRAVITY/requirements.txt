@@ -1,0 +1,20 @@
+# Yunus Emre RAG Chatbot - Bağımlılıklar
+
+# LangChain temel paketler
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-core>=0.3.0
+
+# Embedding ve LLM entegrasyonları
+langchain-huggingface>=0.1.0
+langchain-ollama>=0.2.0
+sentence-transformers>=2.2.0
+
+# Vektör veritabanı
+faiss-cpu>=1.7.0
+
+# BM25 Retriever (Hibrit Arama)
+rank_bm25>=0.2.0
+
+# Kullanıcı arayüzü
+streamlit>=1.30.0

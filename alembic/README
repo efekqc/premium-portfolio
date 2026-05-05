@@ -1,0 +1,23 @@
+Async Alembic environment.
+
+Common commands:
+
+    # Apply all pending migrations
+    alembic upgrade head
+
+    # Roll back the most recent migration
+    alembic downgrade -1
+
+    # Roll back to empty
+    alembic downgrade base
+
+    # Show current revision
+    alembic current
+
+    # Generate a new (empty) revision
+    alembic revision -m "describe change"
+
+    # Autogenerate from model diff (use with care — raw DDL features
+    # like generated columns, partial indexes, triggers, and pg_trgm
+    # GIN indexes will NOT be detected; review and patch by hand).
+    alembic revision --autogenerate -m "describe change"

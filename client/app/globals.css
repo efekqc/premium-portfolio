@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Design tokens.  Dark-first; no light-mode counterparts (per v1 brief).
+   --------------------------------------------------------------------------- */
+:root {
+  --background: 10 10 11;       /* ink-950 */
+  --foreground: 245 245 244;    /* near-white */
+  --muted:      163 163 163;    /* zinc-400 */
+  --border:     38 38 46;       /* ink-600 */
+  --accent:     233 213 161;    /* champagne */
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply bg-ink-950 text-zinc-100 font-sans antialiased;
+    background-image:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(233, 213, 161, 0.08), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(233, 213, 161, 0.04), transparent 70%);
+    min-height: 100dvh;
+  }
+
+  /* Selection — warm accent, never blue. */
+  ::selection {
+    @apply bg-accent/30 text-white;
+  }
+
+  /* Focus ring — visible but elegant. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-accent/60 ring-offset-2 ring-offset-ink-950;
+  }
+
+  /* Hide scrollbars during fade-ins to avoid jitter on initial paint. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-ink-950;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-ink-700 rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-600;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Fine top-line that fades at the edges — used under the hero eyebrow. */
+  .hairline {
+    background-image: linear-gradient(
+      to right,
+      transparent,
+      rgba(233, 213, 161, 0.5),
+      transparent
+    );
+    height: 1px;
+  }
+
+  /* Reduce motion preference is honoured by Framer Motion automatically,
+     but keep CSS animations in sync. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: premium-portfolio-api
+    runtime: python
+    region: frankfurt          # Closest to Neon eu-central-1
+    plan: free                 # Upgrade to starter/standard for always-on
+    branch: main
+
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      alembic upgrade head
+
+    startCommand: >
+      uvicorn app.main:app
+      --host 0.0.0.0
+      --port $PORT
+      --workers 2
+      --loop uvloop
+      --http httptools
+
+    healthCheckPath: /health
+
+    envVars:
+      # Set these in the Render dashboard (do NOT commit real values):
+      - key: DATABASE_URL
+        sync: false            # Render will prompt for value on first deploy
+
+      - key: ADMIN_TOKEN
+        generateValue: true    # Render auto-generates a secure random value
+
+      - key: CORS_ORIGINS
+        value: '["*"]'         # Tighten to your Vercel URL after first deploy
+
+      - key: APP_NAME
+        value: Premium Portfolio
+
+      - key: DEBUG
+        value: "false"
+
+      - key: DB_POOL_SIZE
+        value: "5"
+
+      - key: DB_MAX_OVERFLOW
+        value: "10"
+
+      - key: PYTHON_VERSION
+        value: "3.11.0"

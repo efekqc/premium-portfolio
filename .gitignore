@@ -1,0 +1,59 @@
+# ── Secrets & environment ─────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+!.env.local.example
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+venv/
+.venv/
+env/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Alembic ───────────────────────────────────────────────────────────────
+# Keep versions/ tracked; ignore any auto-generated temp files
+*.pyc
+
+# ── Node / Next.js ────────────────────────────────────────────────────────
+node_modules/
+client/node_modules/
+client/.next/
+client/out/
+client/.vercel/
+client/next-env.d.ts
+*.tsbuildinfo
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Desktop/.DS_Store
+Thumbs.db
+
+# ── IDE ───────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Misc ──────────────────────────────────────────────────────────────────
+*.sqlite
+*.db

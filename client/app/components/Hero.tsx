@@ -1,41 +1,95 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowRight, Camera, Play } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+} from 'framer-motion';
+import { ArrowRight, Camera, Play } from 'lucide-react';
 
-/**
- * Full-bleed hero. Mobile-first; expands gracefully to wide viewports.
- *
- * Background slot uses a placeholder gradient + noise; swap in a <video> or
- * <Image> when assets land. Comments mark the swap point.
- */
-export function Hero() {
+export interface HeroSlide {
+  src: string;
+  alt: string;
+  dominantColor?: string | null;
+}
+
+const CONCEPTS: Array<{ lead: string; accent: string }> = [
+  { lead: 'Midnight in', accent: 'Tokyo' },
+  { lead: 'Molecular', accent: 'Gastronomy' },
+  { lead: 'Fire &', accent: 'Smoke' },
+  { lead: 'Saffron at', accent: 'Dusk' },
+  { lead: 'Vapor &', accent: 'Bone' },
+  { lead: 'The Nordic', accent: 'Coast' },
+  { lead: 'A taste of', accent: 'Provence' },
+];
+
+const SLIDE_INTERVAL = 6000;
+const CONCEPT_INTERVAL = 3600;
+
+export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
   const prefersReducedMotion = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const [conceptIndex, setConceptIndex] = useState(0);
 
-  // Stagger children so eyebrow → headline → subhead → CTAs reveal in sequence.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '22%']);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+  const contentY = useTransform(scrollYProgress, [0, 1], ['0%', '12%']);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
+
+  useEffect(() => {
+    if (prefersReducedMotion || slides.length <= 1) return;
+    const id = setInterval(
+      () => setSlideIndex((i) => (i + 1) % slides.length),
+      SLIDE_INTERVAL,
+    );
+    return () => clearInterval(id);
+  }, [slides.length, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const id = setInterval(
+      () => setConceptIndex((i) => (i + 1) % CONCEPTS.length),
+      CONCEPT_INTERVAL,
+    );
+    return () => clearInterval(id);
+  }, [prefersReducedMotion]);
+
   const container = {
     hidden: { opacity: 0 },
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: prefersReducedMotion ? 0 : 0.12,
-        delayChildren: prefersReducedMotion ? 0 : 0.15,
+        staggerChildren: prefersReducedMotion ? 0 : 0.14,
+        delayChildren: prefersReducedMotion ? 0 : 0.4,
       },
     },
   };
-
   const item = {
-    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 16 },
+    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 28 },
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] },
     },
   };
 
+  const concept = CONCEPTS[conceptIndex];
+  const conceptKey = `${conceptIndex}-${concept.accent}`;
+
   return (
     <section
+      ref={sectionRef}
       className="
         relative isolate
         min-h-[100svh] w-full
@@ -45,99 +99,131 @@ export function Hero() {
       "
       aria-label="Introduction"
     >
-      {/* ---- Background layer ----------------------------------------------
-          Replace this <div> with a <video> tag (autoPlay, muted, playsInline,
-          loop) or a Next/Image fill when the asset is ready. Keep the overlay
-          gradients below — they ensure text legibility regardless of media.
-          ------------------------------------------------------------------- */}
-      <div
+      {/* ── Background slider — crossfade + ken burns ────────────────────── */}
+      <motion.div
         aria-hidden
-        className="
-          absolute inset-0 -z-20
-          bg-[radial-gradient(ellipse_at_top,_#1d1d24,_#0a0a0b_60%)]
-        "
+        className="absolute inset-0 -z-30"
+        style={prefersReducedMotion ? undefined : { y: bgY, scale: bgScale }}
       >
-        {/* TODO(asset): drop in <video src="/hero.mp4" .../> here */}
-      </div>
+        <div className="absolute inset-0 bg-ink-950" />
+        <AnimatePresence>
+          {slides.map((slide, i) =>
+            i === slideIndex ? (
+              <motion.div
+                key={`${slide.src}-${i}`}
+                initial={{ opacity: 0, scale: 1.06 }}
+                animate={{
+                  opacity: 1,
+                  scale: prefersReducedMotion ? 1 : 1.18,
+                }}
+                exit={{ opacity: 0, transition: { duration: 1.2 } }}
+                transition={{
+                  opacity: { duration: 1.6, ease: 'easeOut' },
+                  scale: { duration: 8.5, ease: 'linear' },
+                }}
+                className="absolute inset-0"
+                style={{ backgroundColor: slide.dominantColor ?? '#15151a' }}
+              >
+                <Image
+                  src={slide.src}
+                  alt={slide.alt}
+                  fill
+                  priority={i === 0}
+                  sizes="100vw"
+                  className="object-cover"
+                />
+              </motion.div>
+            ) : null,
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-      {/* Subtle film-grain noise to add texture over flat gradients */}
+      {/* ── Dark overlay scrims ──────────────────────────────────────────── */}
       <div
         aria-hidden
-        className="absolute inset-0 -z-10 bg-noise opacity-[0.05] mix-blend-overlay"
+        className="absolute inset-0 -z-20 bg-gradient-to-b from-ink-950/85 via-ink-950/55 to-ink-950"
       />
-
-      {/* Bottom-fade for content legibility regardless of background asset */}
       <div
         aria-hidden
-        className="
-          absolute inset-x-0 bottom-0 -z-10 h-2/3
-          bg-gradient-to-t from-ink-950 via-ink-950/70 to-transparent
-        "
+        className="absolute inset-0 -z-20 bg-gradient-to-r from-ink-950/60 via-transparent to-ink-950/30"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-noise opacity-[0.06] mix-blend-overlay"
       />
 
-      {/* ---- Content ------------------------------------------------------- */}
+      {/* ── Content ──────────────────────────────────────────────────────── */}
       <motion.div
         variants={container}
         initial="hidden"
         animate="show"
-        className="
-          relative mx-auto w-full max-w-6xl
-          py-24 sm:py-32 lg:py-40
-        "
+        style={
+          prefersReducedMotion
+            ? undefined
+            : { y: contentY, opacity: contentOpacity }
+        }
+        className="relative mx-auto w-full max-w-6xl py-24 sm:py-32 lg:py-40"
       >
-        {/* Eyebrow */}
         <motion.div variants={item} className="flex items-center gap-3">
-          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
-          <p className="text-xs uppercase tracking-[0.22em] text-zinc-400 font-medium">
+          <span className="inline-flex h-1.5 w-1.5 rounded-full bg-accent animate-pulse-slow" />
+          <p className="text-xs uppercase tracking-[0.22em] text-zinc-200 font-medium">
             Photography · Synthetic · Mixed Media
           </p>
         </motion.div>
 
-        {/* Headline */}
         <motion.h1
           variants={item}
-          className="
-            mt-6 sm:mt-8
-            font-display font-light text-balance
-            text-5xl leading-[1.05] tracking-tightest-2
-            sm:text-6xl
-            md:text-7xl
-            lg:text-[clamp(4.5rem,8vw,8rem)]
-            text-zinc-50
-          "
+          className="mt-6 sm:mt-8 font-display font-light text-balance text-zinc-50 leading-[0.95] tracking-tightest-2"
         >
-          Light,{' '}
-          <span className="italic text-accent">captured</span>
-          <span className="text-accent">.</span>
+          <span className="block font-sans font-light text-zinc-300 text-3xl sm:text-4xl md:text-5xl">
+            A study in
+          </span>
+          <span className="mt-2 sm:mt-3 block text-6xl sm:text-7xl md:text-8xl lg:text-[clamp(5rem,9vw,9rem)]">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.span
+                key={conceptKey}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="inline-flex flex-wrap items-baseline gap-x-3 sm:gap-x-5"
+              >
+                <RevealWord
+                  text={concept.lead}
+                  className="font-sans font-light text-zinc-100"
+                />
+                <RevealWord
+                  text={concept.accent}
+                  className="font-display italic text-accent"
+                  delay={0.12}
+                />
+                <RevealWord
+                  text="."
+                  className="font-display text-accent"
+                  delay={0.24}
+                />
+              </motion.span>
+            </AnimatePresence>
+          </span>
         </motion.h1>
 
-        {/* Subhead */}
         <motion.p
           variants={item}
-          className="
-            mt-6 sm:mt-8 max-w-xl
-            text-base sm:text-lg leading-relaxed text-zinc-400
-            text-pretty
-          "
+          className="mt-8 sm:mt-10 max-w-xl text-base sm:text-lg leading-relaxed text-zinc-300 text-pretty"
         >
-          A curated archive of moments — half observed through a lens,
-          half coaxed from latent space. Browse by mood, not menu.
+          A curated archive of moments — half observed through a lens, half
+          coaxed from latent space. Browse by mood, not menu.
         </motion.p>
 
-        {/* CTAs */}
         <motion.div
           variants={item}
-          className="
-            mt-10 sm:mt-12
-            flex flex-col sm:flex-row gap-3 sm:gap-4
-          "
+          className="mt-10 sm:mt-12 flex flex-col sm:flex-row gap-3 sm:gap-4"
         >
           <Link
             href="/work"
             className="
               group inline-flex items-center justify-center gap-2
-              px-6 py-3.5 sm:py-4
-              rounded-full
+              px-6 py-3.5 sm:py-4 rounded-full
               bg-accent text-ink-950 font-medium text-sm
               hover:bg-accent-muted transition-colors
               focus-visible:ring-2 focus-visible:ring-accent
@@ -146,15 +232,13 @@ export function Hero() {
             View the work
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
           </Link>
-
           <button
             type="button"
             className="
               group inline-flex items-center justify-center gap-2
-              px-6 py-3.5 sm:py-4
-              rounded-full
-              border border-ink-600 hover:border-ink-500
-              text-zinc-200 font-medium text-sm
+              px-6 py-3.5 sm:py-4 rounded-full
+              border border-ink-500 hover:border-ink-400
+              text-zinc-100 font-medium text-sm
               bg-ink-900/40 backdrop-blur-sm
               hover:bg-ink-800/60 transition-colors
             "
@@ -164,41 +248,72 @@ export function Hero() {
           </button>
         </motion.div>
 
-        {/* Footer-row inside the hero — credibility / quick stats */}
         <motion.div
           variants={item}
-          className="
-            mt-16 sm:mt-24
-            flex flex-wrap items-center gap-x-8 gap-y-3
-            text-xs text-zinc-500
-          "
+          className="mt-16 sm:mt-24 flex flex-wrap items-center gap-x-8 gap-y-3 text-xs text-zinc-300"
         >
           <span className="inline-flex items-center gap-2">
             <Camera className="h-3.5 w-3.5" />
             Original &amp; synthetic
           </span>
-          <span className="hidden sm:inline-block h-px w-8 bg-ink-600" />
+          <span className="hidden sm:inline-block h-px w-8 bg-ink-500" />
           <span>Updated regularly</span>
-          <span className="hidden sm:inline-block h-px w-8 bg-ink-600" />
+          <span className="hidden sm:inline-block h-px w-8 bg-ink-500" />
           <span>No tracking, no popups</span>
         </motion.div>
       </motion.div>
 
-      {/* Scroll cue — pinned to the bottom on tall screens */}
+      {/* ── Slide pips ───────────────────────────────────────────────────── */}
+      {slides.length > 1 && (
+        <div className="absolute bottom-6 right-5 sm:right-12 z-10 flex items-center gap-2">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setSlideIndex(i)}
+              className={`h-px transition-all duration-700 ${
+                i === slideIndex ? 'w-10 bg-accent' : 'w-5 bg-zinc-500'
+              }`}
+              aria-label={`Show slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* ── Scroll cue ───────────────────────────────────────────────────── */}
       <motion.div
         aria-hidden
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: prefersReducedMotion ? 0 : 1.4, duration: 0.8 }}
-        className="
-          absolute bottom-6 left-1/2 -translate-x-1/2
-          hidden sm:flex flex-col items-center gap-2
-          text-[10px] uppercase tracking-[0.3em] text-zinc-500
-        "
+        transition={{ delay: prefersReducedMotion ? 0 : 1.6, duration: 0.8 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden sm:flex flex-col items-center gap-2 text-[10px] uppercase tracking-[0.3em] text-zinc-300"
       >
         <span>Scroll</span>
-        <span className="block h-8 w-px bg-gradient-to-b from-zinc-500 to-transparent" />
+        <span className="block h-8 w-px bg-gradient-to-b from-zinc-300 to-transparent" />
       </motion.div>
     </section>
+  );
+}
+
+function RevealWord({
+  text,
+  className,
+  delay = 0,
+}: {
+  text: string;
+  className?: string;
+  delay?: number;
+}) {
+  return (
+    <span className={`inline-block overflow-hidden align-baseline ${className ?? ''}`}>
+      <motion.span
+        initial={{ y: '100%' }}
+        animate={{ y: 0 }}
+        exit={{ y: '-100%' }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay }}
+        className="inline-block"
+      >
+        {text}
+      </motion.span>
+    </span>
   );
 }

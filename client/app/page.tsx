@@ -1,70 +1,82 @@
 import { Suspense } from 'react';
-import { Hero } from './components/Hero';
+import { Hero, type HeroSlide } from './components/Hero';
 import { CategoryNav } from './components/CategoryNav';
 import { ImageGrid } from './components/ImageGrid';
-import { api } from '@/lib/api';
+import { GalleryHeader } from './components/GalleryHeader';
+import { api, storageUrl } from '@/lib/api';
 
 interface Props {
   searchParams: { category?: string; page?: string };
 }
 
-/**
- * Server Component — data is fetched on the server, streamed to the client.
- *
- * Zero Page Reload:
- *  - Initial HTML arrives fully populated (no client-side data waterfall).
- *  - Filtering via CategoryNav updates the URL param; Next.js diffs the RSC
- *    tree and re-renders only the changed subtree — no full navigation.
- *  - Pagination (page param) follows the same pattern.
- */
 export default async function HomePage({ searchParams }: Props) {
   const page = Math.max(1, Number(searchParams.page ?? 1));
   const categorySlug = searchParams.category;
 
-  // Parallel fetch — categories for the nav, images for the grid.
-  const [categories, imageList] = await Promise.all([
+  const [categories, imageList, featuredList] = await Promise.all([
     api.categories.list().catch(() => []),
     api.images
-      .list({ category_slug: categorySlug, page, page_size: 24, status: 'published' })
-      .catch(() => ({ items: [], total: 0, page: 1, page_size: 24, has_next: false })),
+      .list({
+        category_slug: categorySlug,
+        page,
+        page_size: 24,
+        status: 'published',
+      })
+      .catch(() => ({
+        items: [],
+        total: 0,
+        page: 1,
+        page_size: 24,
+        has_next: false,
+      })),
+    // Pull a small set of featured / recent images to drive the hero slider.
+    api.images
+      .list({ status: 'published', page_size: 6, is_featured: true })
+      .catch(() => ({
+        items: [],
+        total: 0,
+        page: 1,
+        page_size: 6,
+        has_next: false,
+      })),
   ]);
+
+  const heroSlides: HeroSlide[] = (
+    featuredList.items.length > 0 ? featuredList.items : imageList.items
+  )
+    .slice(0, 5)
+    .map((img) => ({
+      src: storageUrl(img.storage_key),
+      alt: img.alt_text,
+      dominantColor: img.dominant_color,
+    }));
 
   return (
     <main className="relative">
-      <Hero />
+      <Hero slides={heroSlides} />
 
-      {/* ── Gallery section ──────────────────────────────────────────────── */}
       <section
         id="gallery"
         aria-label="Photo gallery"
-        className="mx-auto max-w-screen-xl px-4 sm:px-8 lg:px-16 pb-24"
+        className="relative mx-auto max-w-screen-xl px-4 sm:px-8 lg:px-16 pb-24 pt-16 sm:pt-24"
       >
-        {/* Section header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-          <div>
-            <h2 className="font-display text-2xl sm:text-3xl font-light text-zinc-100 tracking-tight">
-              {categorySlug
-                ? (categories.find((c) => c.slug === categorySlug)?.name ?? 'Gallery')
-                : 'Gallery'}
-            </h2>
-            <p className="mt-1 text-sm text-zinc-500">
-              {imageList.total} {imageList.total === 1 ? 'image' : 'images'}
-            </p>
-          </div>
-
-          {/* CategoryNav is a Client Component; wrap in Suspense because it
-              calls useSearchParams() which requires a boundary in App Router. */}
-          <Suspense fallback={<div className="h-9" />}>
-            <CategoryNav categories={categories} activeSlug={categorySlug} />
-          </Suspense>
-        </div>
-
-        {/* Divider */}
-        <div className="hairline mb-8" />
+        <GalleryHeader
+          title={
+            categorySlug
+              ? (categories.find((c) => c.slug === categorySlug)?.name ?? 'Gallery')
+              : 'Selected Work'
+          }
+          eyebrow={categorySlug ? 'Filtered view' : 'A selection — 2026'}
+          count={imageList.total}
+          right={
+            <Suspense fallback={<div className="h-9" />}>
+              <CategoryNav categories={categories} activeSlug={categorySlug} />
+            </Suspense>
+          }
+        />
 
         <ImageGrid images={imageList.items} />
 
-        {/* Pagination — simple prev / next links (RSC-native, zero JS) */}
         {(page > 1 || imageList.has_next) && (
           <div className="mt-12 flex justify-center gap-3">
             {page > 1 && (

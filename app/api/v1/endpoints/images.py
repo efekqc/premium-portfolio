@@ -99,8 +99,27 @@ async def list_images(
     if search:
         stmt = stmt.where(Image.title.ilike(f"%{search}%"))
 
-    # Total count (apply same filters, but drop eager loads)
-    count_stmt = select(func.count()).select_from(stmt.order_by(None).subquery())
+    # Total count — build a parallel statement WITHOUT loader options
+    # (you can't .subquery() a stmt that has selectinload options).
+    count_stmt = select(func.count(Image.id)).where(Image.deleted_at.is_(None))
+    if status_filter is not None:
+        count_stmt = count_stmt.where(Image.status == status_filter)
+    if source is not None:
+        count_stmt = count_stmt.where(Image.source == source)
+    if category_id is not None:
+        count_stmt = count_stmt.where(Image.category_id == category_id)
+    if category_slug is not None:
+        from app.models.category import Category
+
+        count_stmt = count_stmt.join(
+            Category, Image.category_id == Category.id
+        ).where(Category.slug == category_slug, Category.deleted_at.is_(None))
+    if tag_slug is not None:
+        count_stmt = count_stmt.where(Image.tags.any(Tag.slug == tag_slug))
+    if is_featured is not None:
+        count_stmt = count_stmt.where(Image.is_featured.is_(is_featured))
+    if search:
+        count_stmt = count_stmt.where(Image.title.ilike(f"%{search}%"))
     total = (await db.execute(count_stmt)).scalar_one()
 
     # Page slice

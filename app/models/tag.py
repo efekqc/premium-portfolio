@@ -7,6 +7,11 @@ from sqlalchemy.dialects.postgresql import CITEXT
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from datetime import datetime
+
+from sqlalchemy import DateTime
+from sqlalchemy.sql import func as _func
+
 from app.db.base import Base, UUIDPKMixin
 
 if TYPE_CHECKING:
@@ -45,6 +50,9 @@ class Tag(Base, UUIDPKMixin):
     name: Mapped[str] = mapped_column(String(80), nullable=False)
     color_hex: Mapped[Optional[str]] = mapped_column(String(7))
     usage_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=_func.now(), nullable=False
+    )
 
     images: Mapped[list["Image"]] = relationship(
         secondary=image_tags, back_populates="tags"

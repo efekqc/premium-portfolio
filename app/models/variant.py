@@ -30,10 +30,20 @@ class ImageVariant(Base, UUIDPKMixin):
         index=True,
     )
     size: Mapped[VariantSize] = mapped_column(
-        SAEnum(VariantSize, name="variant_size"), nullable=False
+        SAEnum(
+            VariantSize,
+            name="variant_size",
+            values_callable=lambda e: [m.value for m in e],
+        ),
+        nullable=False,
     )
     format: Mapped[VariantFormat] = mapped_column(
-        SAEnum(VariantFormat, name="variant_format"), nullable=False
+        SAEnum(
+            VariantFormat,
+            name="variant_format",
+            values_callable=lambda e: [m.value for m in e],
+        ),
+        nullable=False,
     )
 
     storage_key: Mapped[str] = mapped_column(String(500), nullable=False)

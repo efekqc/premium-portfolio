@@ -45,12 +45,20 @@ class Image(Base, UUIDPKMixin, TimestampMixin, SoftDeleteMixin):
     )
 
     status: Mapped[ImageStatus] = mapped_column(
-        SAEnum(ImageStatus, name="image_status"),
+        SAEnum(
+            ImageStatus,
+            name="image_status",
+            values_callable=lambda e: [m.value for m in e],
+        ),
         default=ImageStatus.DRAFT,
         nullable=False,
     )
     source: Mapped[ImageSource] = mapped_column(
-        SAEnum(ImageSource, name="image_source"),
+        SAEnum(
+            ImageSource,
+            name="image_source",
+            values_callable=lambda e: [m.value for m in e],
+        ),
         default=ImageSource.ORIGINAL,
         nullable=False,
     )

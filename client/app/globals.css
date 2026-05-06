@@ -63,6 +63,21 @@
     text-wrap: pretty;
   }
 
+  /* Hide native cursor when a fine pointer (mouse/trackpad) is present;
+     leave it alone for touch devices and on form inputs. */
+  @media (pointer: fine) {
+    .cursor-fine-none,
+    .cursor-fine-none * {
+      cursor: none;
+    }
+    .cursor-fine-none input,
+    .cursor-fine-none textarea,
+    .cursor-fine-none select,
+    .cursor-fine-none [contenteditable='true'] {
+      cursor: text;
+    }
+  }
+
   /* Fine top-line that fades at the edges — used under the hero eyebrow. */
   .hairline {
     background-image: linear-gradient(

@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Fraunces } from 'next/font/google';
 import './globals.css';
+import { CustomCursor } from './components/CustomCursor';
 
 const sans = Inter({
   subsets: ['latin'],
@@ -17,18 +18,18 @@ const display = Fraunces({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Portfolio — Light, Captured.',
-    template: '%s · Portfolio',
+    default: 'Atelier Lumina — Avant-Garde Gastronomy, Copenhagen',
+    template: '%s · Atelier Lumina',
   },
   description:
-    'A premium photography portfolio. Original and synthetic imagery, presented with intent.',
+    'A 14-seat experimental gastronomy studio in Copenhagen. Edible architecture at the intersection of fire, fermentation, and latent space.',
   metadataBase: new URL('http://localhost:3000'),
   openGraph: {
     type: 'website',
-    siteName: 'Portfolio',
-    title: 'Portfolio — Light, Captured.',
+    siteName: 'Atelier Lumina',
+    title: 'Atelier Lumina — Avant-Garde Gastronomy, Copenhagen',
     description:
-      'A premium photography portfolio. Original and synthetic imagery, presented with intent.',
+      'A 14-seat experimental gastronomy studio in Copenhagen. Edible architecture at the intersection of fire, fermentation, and latent space.',
   },
   twitter: { card: 'summary_large_image' },
   robots: { index: true, follow: true },
@@ -49,7 +50,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sans.variable} ${display.variable} dark`}>
-      <body className="min-h-dvh overflow-x-hidden">{children}</body>
+      <body className="min-h-dvh overflow-x-hidden cursor-fine-none">
+        <CustomCursor />
+        {children}
+      </body>
     </html>
   );
 }

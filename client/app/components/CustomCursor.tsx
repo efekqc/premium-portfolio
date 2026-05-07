@@ -6,6 +6,17 @@ import { motion, useMotionValue, useSpring } from 'framer-motion';
 const INTERACTIVE_SELECTOR =
   'a, button, [role="button"], [data-cursor="interactive"], input, textarea, select, label';
 
+/**
+ * Two-layer cursor — earthy terracotta dot with a thin sage outer ring.
+ *
+ * Performance:
+ *   - No `mix-blend-mode` (was the main cause of paint lag).
+ *   - Both layers are positioned with framer-motion's transform-only motion
+ *     values; we add `willChange: 'transform'` so the compositor keeps each
+ *     layer on its own GPU layer (translate3d under the hood).
+ *   - The dot uses a tighter spring for snap; the ring lags slightly for
+ *     a soft, breathable trail.
+ */
 export function CustomCursor() {
   const [mounted, setMounted] = useState(false);
   const [isInteractive, setIsInteractive] = useState(false);
@@ -14,15 +25,13 @@ export function CustomCursor() {
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
 
-  // Soft spring for the outer ring; tighter spring for the dot.
-  const ringX = useSpring(x, { stiffness: 220, damping: 28, mass: 0.5 });
-  const ringY = useSpring(y, { stiffness: 220, damping: 28, mass: 0.5 });
-  const dotX = useSpring(x, { stiffness: 600, damping: 32, mass: 0.2 });
-  const dotY = useSpring(y, { stiffness: 600, damping: 32, mass: 0.2 });
+  const ringX = useSpring(x, { stiffness: 240, damping: 28, mass: 0.5 });
+  const ringY = useSpring(y, { stiffness: 240, damping: 28, mass: 0.5 });
+  const dotX = useSpring(x, { stiffness: 700, damping: 32, mass: 0.18 });
+  const dotY = useSpring(y, { stiffness: 700, damping: 32, mass: 0.18 });
 
   useEffect(() => {
     setMounted(true);
-
     const fineMq = window.matchMedia('(pointer: fine)');
     if (!fineMq.matches) return;
 
@@ -30,7 +39,6 @@ export function CustomCursor() {
       x.set(e.clientX);
       y.set(e.clientY);
       if (isHidden) setIsHidden(false);
-
       const target = e.target as Element | null;
       const interactive = !!target?.closest(INTERACTIVE_SELECTOR);
       setIsInteractive(interactive);
@@ -54,7 +62,7 @@ export function CustomCursor() {
 
   return (
     <>
-      {/* Outer ring */}
+      {/* Outer ring — thin, sage-tinted */}
       <motion.div
         aria-hidden
         className="pointer-events-none fixed left-0 top-0 z-[9999] hidden md:block"
@@ -63,23 +71,25 @@ export function CustomCursor() {
           y: ringY,
           translateX: '-50%',
           translateY: '-50%',
+          willChange: 'transform',
         }}
       >
         <motion.div
           animate={{
-            width: isInteractive ? 64 : 32,
-            height: isInteractive ? 64 : 32,
+            width: isInteractive ? 44 : 26,
+            height: isInteractive ? 44 : 26,
+            opacity: isHidden ? 0 : isInteractive ? 0.95 : 0.55,
             borderColor: isInteractive
-              ? 'rgba(233, 213, 161, 0.95)'
-              : 'rgba(244, 244, 245, 0.4)',
-            opacity: isHidden ? 0 : 1,
+              ? 'rgba(193, 107, 80, 0.95)'
+              : 'rgba(218, 213, 196, 0.55)',
           }}
-          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-          className="rounded-full border mix-blend-difference"
+          transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          className="rounded-full border"
+          style={{ borderWidth: '1px', willChange: 'width, height, opacity' }}
         />
       </motion.div>
 
-      {/* Inner dot */}
+      {/* Inner dot — terracotta */}
       <motion.div
         aria-hidden
         className="pointer-events-none fixed left-0 top-0 z-[9999] hidden md:block"
@@ -88,15 +98,17 @@ export function CustomCursor() {
           y: dotY,
           translateX: '-50%',
           translateY: '-50%',
+          willChange: 'transform',
         }}
       >
         <motion.div
           animate={{
-            scale: isInteractive ? 0 : 1,
+            scale: isInteractive ? 0.4 : 1,
             opacity: isHidden ? 0 : 1,
           }}
-          transition={{ duration: 0.2 }}
-          className="h-1.5 w-1.5 rounded-full bg-accent mix-blend-difference"
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          className="h-2 w-2 rounded-full bg-accent"
+          style={{ willChange: 'transform, opacity' }}
         />
       </motion.div>
     </>

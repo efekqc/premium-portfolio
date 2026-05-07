@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Inter, Fraunces } from 'next/font/google';
+import { Inter, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 import { CustomCursor } from './components/CustomCursor';
 import { Header } from './components/Header';
@@ -10,11 +10,16 @@ const sans = Inter({
   variable: '--font-sans',
 });
 
-const display = Fraunces({
+/**
+ * Cormorant Garamond replaces Fraunces — softer humanist forms, gentle
+ * old-style italic, warmer overall feel for the new organic theme.
+ */
+const display = Cormorant_Garamond({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-display',
-  axes: ['opsz'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +42,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0a0a0b',
+  themeColor: '#1b241e',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,

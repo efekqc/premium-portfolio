@@ -42,8 +42,10 @@ export function CarouselSection({ items }: { items: CarouselItem[] }) {
 
   return (
     <section
+      id="carousel"
+      data-snap
       aria-label="Inside the studio"
-      className="relative bg-[#efe7da] text-ink-950 overflow-hidden"
+      className="relative bg-sand-100 text-sand-ink overflow-hidden"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 pt-24 sm:pt-32 pb-12 sm:pb-16">
         <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-end">

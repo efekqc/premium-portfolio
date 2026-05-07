@@ -37,8 +37,9 @@ export function AboutSection({ slides = [] }: Props) {
   return (
     <section
       id="about"
+      data-snap
       aria-label="About Atelier Lumina"
-      className="relative isolate overflow-hidden scroll-mt-24"
+      className="relative isolate overflow-hidden"
     >
       {/* Crossfading background images */}
       <div aria-hidden className="absolute inset-0 -z-30 bg-ink-950">

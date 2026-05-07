@@ -5,7 +5,12 @@ import { MenuSection } from './components/MenuSection';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { MapSection } from './components/MapSection';
 import { BlackFooter } from './components/BlackFooter';
+import { SectionFade } from './components/SectionFade';
 import { api, storageUrl } from '@/lib/api';
+
+const FOREST = '#1b241e'; // ink-800
+const SAND = '#f4f1ea';   // sand-100
+const OLIVE = '#0e1612';  // ink-950 (testimonials)
 
 export default async function HomePage() {
   const [imageList, featuredList] = await Promise.all([
@@ -29,7 +34,6 @@ export default async function HomePage() {
       })),
   ]);
 
-  // Hero rotates through featured images (or first published if none featured).
   const heroSlides: HeroSlide[] = (
     featuredList.items.length > 0 ? featuredList.items : imageList.items
   )
@@ -40,13 +44,11 @@ export default async function HomePage() {
       dominantColor: img.dominant_color,
     }));
 
-  // About section uses a different curated subset for visual distinction.
   const aboutSlides = imageList.items.slice(2, 6).map((img) => ({
     src: storageUrl(img.storage_key),
     alt: img.alt_text,
   }));
 
-  // Carousel — venue/plate imagery (use the broader image set).
   const carouselItems: CarouselItem[] = imageList.items
     .slice(0, 12)
     .map((img) => ({
@@ -58,11 +60,28 @@ export default async function HomePage() {
   return (
     <>
       <Hero slides={heroSlides} />
+
+      {/* About sits in the same forest range as Hero — no fade needed. */}
       <AboutSection slides={aboutSlides.length > 0 ? aboutSlides : heroSlides} />
+
+      {/* forest → sand */}
+      <SectionFade from={FOREST} to={SAND} />
       <CarouselSection items={carouselItems} />
+
+      {/* sand → forest */}
+      <SectionFade from={SAND} to={FOREST} />
       <MenuSection />
+
+      {/* forest → deep olive (testimonials) */}
+      <SectionFade from={FOREST} to={OLIVE} />
       <TestimonialsSection />
+
+      {/* olive → forest */}
+      <SectionFade from={OLIVE} to={FOREST} />
       <MapSection />
+
+      {/* forest → black footer */}
+      <SectionFade from={FOREST} to="#000000" height="6rem" />
       <BlackFooter />
     </>
   );

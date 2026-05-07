@@ -64,7 +64,7 @@ export function Footer() {
         aria-hidden
         className="
           absolute inset-0 -z-10
-          bg-[radial-gradient(ellipse_at_bottom,_rgba(233,213,161,0.08),_transparent_60%)]
+          bg-[radial-gradient(ellipse_at_bottom,_rgba(193,107,80,0.10),_transparent_60%)]
         "
       />
       <div

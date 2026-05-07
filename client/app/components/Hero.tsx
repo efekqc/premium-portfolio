@@ -63,6 +63,8 @@ export function Hero({ slides = [] }: { slides?: HeroSlide[] }) {
   return (
     <section
       ref={sectionRef}
+      id="hero"
+      data-snap
       className="relative isolate min-h-[100svh] w-full flex items-center justify-center overflow-hidden text-center px-5"
       aria-label="Atelier Lumina"
     >

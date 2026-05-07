@@ -61,8 +61,10 @@ export function TestimonialsSection() {
 
   return (
     <section
+      id="testimonials"
+      data-snap
       aria-label="Guest reviews"
-      className="relative isolate overflow-hidden bg-[#0c1410] py-28 sm:py-36 lg:py-44 px-5 sm:px-8 lg:px-12"
+      className="relative isolate overflow-hidden bg-ink-950 py-28 sm:py-36 lg:py-44 px-5 sm:px-8 lg:px-12"
     >
       {/* Botanical leaf texture — subtle */}
       <div
@@ -79,7 +81,7 @@ export function TestimonialsSection() {
       </div>
       <div
         aria-hidden
-        className="absolute inset-0 -z-20 bg-gradient-to-b from-[#0c1410] via-[#0c1410]/85 to-[#0c1410]"
+        className="absolute inset-0 -z-20 bg-gradient-to-b from-[#0e1612] via-[#0e1612]/85 to-[#0e1612]"
       />
       <div
         aria-hidden
@@ -205,7 +207,7 @@ function ReviewCard({
           flex flex-col items-center
         "
       >
-        <span className="block h-[72px] w-[72px] rounded-full overflow-hidden ring-4 ring-[#0c1410] bg-ink-800">
+        <span className="block h-[72px] w-[72px] rounded-full overflow-hidden ring-4 ring-[#0e1612] bg-ink-800">
           <Image
             src={review.avatar}
             alt={review.name}

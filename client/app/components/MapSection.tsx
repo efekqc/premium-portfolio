@@ -16,8 +16,9 @@ export function MapSection() {
   return (
     <section
       id="location"
+      data-snap
       aria-label="Visit us"
-      className="relative bg-ink-950 py-24 sm:py-32 px-5 sm:px-8 lg:px-12 scroll-mt-24"
+      className="relative bg-ink-800 py-24 sm:py-32 px-5 sm:px-8 lg:px-12"
     >
       <div className="mx-auto max-w-7xl">
         <motion.div

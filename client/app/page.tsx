@@ -1,17 +1,20 @@
 import { Hero, type HeroSlide } from './components/Hero';
 import { AboutSection } from './components/AboutSection';
 import { CarouselSection, type CarouselItem } from './components/CarouselSection';
-import { MenuSection } from './components/MenuSection';
-import { TestimonialsSection } from './components/TestimonialsSection';
-import { MapSection } from './components/MapSection';
 import { BlackFooter } from './components/BlackFooter';
 import { SectionFade } from './components/SectionFade';
 import { api, storageUrl } from '@/lib/api';
 
-const FOREST = '#1b241e'; // ink-800
-const SAND = '#f4f1ea';   // sand-100
-const OLIVE = '#0e1612';  // ink-950 (testimonials)
+const FOREST = '#16201a';
+const SAND = '#ece8e1';
 
+/**
+ * Homepage = minimalist showcase.
+ *
+ * Hero · brief About · Image Carousel · BlackFooter.
+ * Menu, Testimonials, and Map have moved to dedicated routes
+ * (/menu, /about, /contact respectively).
+ */
 export default async function HomePage() {
   const [imageList, featuredList] = await Promise.all([
     api.images
@@ -61,27 +64,15 @@ export default async function HomePage() {
     <>
       <Hero slides={heroSlides} />
 
-      {/* About sits in the same forest range as Hero — no fade needed. */}
       <AboutSection slides={aboutSlides.length > 0 ? aboutSlides : heroSlides} />
 
-      {/* forest → sand */}
       <SectionFade from={FOREST} to={SAND} />
       <CarouselSection items={carouselItems} />
 
-      {/* sand → forest */}
       <SectionFade from={SAND} to={FOREST} />
-      <MenuSection />
 
-      {/* forest → deep olive (testimonials) */}
-      <SectionFade from={FOREST} to={OLIVE} />
-      <TestimonialsSection />
-
-      {/* olive → forest */}
-      <SectionFade from={OLIVE} to={FOREST} />
-      <MapSection />
-
-      {/* forest → black footer */}
-      <SectionFade from={FOREST} to="#000000" height="6rem" />
+      {/* Closing strip + minimal footer */}
+      <SectionFade from={FOREST} to="#0d130f" height="6rem" />
       <BlackFooter />
     </>
   );

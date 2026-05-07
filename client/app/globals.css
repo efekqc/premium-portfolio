@@ -3,15 +3,15 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Design tokens.  Forest-green dark ground, terracotta accent, sand contrast.
+   Strict earthy triad: forest / linen / espresso.  Native cursor restored.
    --------------------------------------------------------------------------- */
 :root {
-  --background: 27 36 30;       /* ink-800, deep forest */
+  --background: 22 32 26;       /* ink-800 — deep forest */
   --foreground: 245 245 244;
   --muted:      163 163 163;
-  --border:     47 64 53;       /* ink-600 */
-  --accent:     193 107 80;     /* terracotta */
-  --header-h:   72px;           /* sticky header height — used for scroll-margin */
+  --border:     39 57 45;       /* ink-600 */
+  --accent:     74 55 40;       /* espresso */
+  --header-h:   72px;
 }
 
 @layer base {
@@ -20,10 +20,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    /* Smooth scrolling for anchor jumps + gentle section snap.
-       Proximity (not mandatory) preserves natural flow on long sections
-       like Menu while still pulling the viewport to a section start when
-       the user ends a scroll near one. */
     scroll-behavior: smooth;
     scroll-snap-type: y proximity;
   }
@@ -31,14 +27,13 @@
   body {
     @apply bg-ink-800 text-zinc-100 font-sans antialiased;
     background-image:
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(193, 107, 80, 0.07), transparent 70%),
-      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(193, 107, 80, 0.04), transparent 70%);
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(74, 55, 40, 0.10), transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(74, 55, 40, 0.05), transparent 70%);
     min-height: 100dvh;
   }
 
-  /* Selection — warm terracotta. */
   ::selection {
-    @apply bg-accent/30 text-white;
+    @apply bg-accent/40 text-white;
   }
 
   :focus-visible {
@@ -72,24 +67,10 @@
     background-image: linear-gradient(
       to right,
       transparent,
-      rgba(193, 107, 80, 0.5),
+      rgba(74, 55, 40, 0.5),
       transparent
     );
     height: 1px;
-  }
-
-  /* Hide native cursor on fine pointers; touch devices keep theirs. */
-  @media (pointer: fine) {
-    .cursor-fine-none,
-    .cursor-fine-none * {
-      cursor: none;
-    }
-    .cursor-fine-none input,
-    .cursor-fine-none textarea,
-    .cursor-fine-none select,
-    .cursor-fine-none [contenteditable='true'] {
-      cursor: text;
-    }
   }
 
   /* Sections marked for snap — header offset is honoured automatically. */
@@ -98,8 +79,6 @@
     scroll-margin-top: var(--header-h);
   }
 
-  /* Reduced-motion overrides — also disable scroll-snap so the user has
-     full control of scrolling pace. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,

@@ -75,12 +75,7 @@ export function CarouselSection({ items }: { items: CarouselItem[] }) {
             <div className="mt-8 flex items-center gap-3">
               <MagneticButton
                 as="a"
-                href="#menu"
-                onClick={() => {
-                  document
-                    .getElementById('menu')
-                    ?.scrollIntoView({ behavior: 'smooth' });
-                }}
+                href="/menu"
                 className="
                   group inline-flex items-center justify-center gap-2
                   px-6 py-3.5 rounded-full

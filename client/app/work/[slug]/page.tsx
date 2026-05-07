@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Sparkles, Eye, Tag } from 'lucide-react';
 import { api, variantUrl, type ImageRead } from '@/lib/api';
-import { cn } from '@/lib/utils';
 
 interface Props {
   params: { slug: string };

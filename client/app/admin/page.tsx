@@ -13,7 +13,7 @@
  * storage pipeline is built.
  */
 
-import { useState, useActionState, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { CheckCircle, AlertCircle, Lock, Plus, FolderOpen, Image as ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

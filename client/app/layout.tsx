@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
-import { CustomCursor } from './components/CustomCursor';
 import { Header } from './components/Header';
 
 const sans = Inter({
@@ -42,7 +41,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1b241e',
+  themeColor: '#16201a',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -56,8 +55,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${sans.variable} ${display.variable} dark`}>
-      <body className="min-h-dvh overflow-x-hidden cursor-fine-none">
-        <CustomCursor />
+      <body className="min-h-dvh overflow-x-hidden">
         <Header />
         {children}
       </body>

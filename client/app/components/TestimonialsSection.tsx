@@ -53,12 +53,6 @@ const RISE = {
 };
 
 export function TestimonialsSection() {
-  function scrollToLocation() {
-    document
-      .getElementById('location')
-      ?.scrollIntoView({ behavior: 'smooth' });
-  }
-
   return (
     <section
       id="testimonials"
@@ -133,12 +127,13 @@ export function TestimonialsSection() {
         {/* CTA */}
         <div className="mt-28 sm:mt-32 flex justify-center">
           <MagneticButton
-            onClick={scrollToLocation}
+            as="a"
+            href="/contact"
             className="
               group inline-flex items-center justify-center gap-2
               px-7 py-4 rounded-full
-              bg-accent text-ink-950 font-medium text-sm
-              hover:bg-accent-muted transition-colors
+              bg-sand-100 text-ink-800 font-medium text-sm
+              hover:bg-sand-200 transition-colors
             "
           >
             Book Now

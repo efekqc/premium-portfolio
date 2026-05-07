@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Inter, Fraunces } from 'next/font/google';
 import './globals.css';
 import { CustomCursor } from './components/CustomCursor';
+import { Header } from './components/Header';
 
 const sans = Inter({
   subsets: ['latin'],
@@ -52,6 +53,7 @@ export default function RootLayout({
     <html lang="en" className={`${sans.variable} ${display.variable} dark`}>
       <body className="min-h-dvh overflow-x-hidden cursor-fine-none">
         <CustomCursor />
+        <Header />
         {children}
       </body>
     </html>

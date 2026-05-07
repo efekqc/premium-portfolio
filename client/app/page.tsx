@@ -1,44 +1,35 @@
 import { Hero, type HeroSlide } from './components/Hero';
-import { GalleryHeader } from './components/GalleryHeader';
-import { Gallery } from './components/Gallery';
-import { Footer } from './components/Footer';
+import { AboutSection } from './components/AboutSection';
+import { CarouselSection, type CarouselItem } from './components/CarouselSection';
+import { MenuSection } from './components/MenuSection';
+import { TestimonialsSection } from './components/TestimonialsSection';
+import { MapSection } from './components/MapSection';
+import { BlackFooter } from './components/BlackFooter';
 import { api, storageUrl } from '@/lib/api';
 
-interface Props {
-  searchParams: { category?: string };
-}
-
-/**
- * Home page is one continuous editorial — Hero, Gallery (with client-side
- * filtering), and Footer. We fetch ALL published images server-side and let
- * the Gallery client component slice them by category in-memory so filtering
- * triggers smooth `layout` animations rather than a network round-trip.
- */
-export default async function HomePage({ searchParams }: Props) {
-  const initialCategorySlug = searchParams.category;
-
-  const [categories, imageList, featuredList] = await Promise.all([
-    api.categories.list().catch(() => []),
+export default async function HomePage() {
+  const [imageList, featuredList] = await Promise.all([
     api.images
-      .list({ status: 'published', page_size: 100 })
+      .list({ status: 'published', page_size: 30 })
       .catch(() => ({
         items: [],
         total: 0,
         page: 1,
-        page_size: 100,
+        page_size: 30,
         has_next: false,
       })),
     api.images
-      .list({ status: 'published', page_size: 6, is_featured: true })
+      .list({ status: 'published', page_size: 8, is_featured: true })
       .catch(() => ({
         items: [],
         total: 0,
         page: 1,
-        page_size: 6,
+        page_size: 8,
         has_next: false,
       })),
   ]);
 
+  // Hero rotates through featured images (or first published if none featured).
   const heroSlides: HeroSlide[] = (
     featuredList.items.length > 0 ? featuredList.items : imageList.items
   )
@@ -49,31 +40,30 @@ export default async function HomePage({ searchParams }: Props) {
       dominantColor: img.dominant_color,
     }));
 
+  // About section uses a different curated subset for visual distinction.
+  const aboutSlides = imageList.items.slice(2, 6).map((img) => ({
+    src: storageUrl(img.storage_key),
+    alt: img.alt_text,
+  }));
+
+  // Carousel — venue/plate imagery (use the broader image set).
+  const carouselItems: CarouselItem[] = imageList.items
+    .slice(0, 12)
+    .map((img) => ({
+      src: storageUrl(img.storage_key),
+      alt: img.alt_text,
+      caption: img.title,
+    }));
+
   return (
     <>
-      <main className="relative z-10 bg-ink-950">
-        <Hero slides={heroSlides} />
-
-        <section
-          id="gallery"
-          aria-label="Photo gallery"
-          className="relative mx-auto max-w-screen-xl px-4 sm:px-8 lg:px-16 pb-32 pt-16 sm:pt-24 scroll-mt-4"
-        >
-          <GalleryHeader
-            title="Selected Work"
-            eyebrow="The studio archive · 2024 — 2026"
-            count={imageList.total}
-          />
-
-          <Gallery
-            categories={categories}
-            images={imageList.items}
-            initialCategorySlug={initialCategorySlug}
-          />
-        </section>
-      </main>
-
-      <Footer />
+      <Hero slides={heroSlides} />
+      <AboutSection slides={aboutSlides.length > 0 ? aboutSlides : heroSlides} />
+      <CarouselSection items={carouselItems} />
+      <MenuSection />
+      <TestimonialsSection />
+      <MapSection />
+      <BlackFooter />
     </>
   );
 }

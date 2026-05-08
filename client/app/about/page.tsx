@@ -1,28 +1,25 @@
 import type { Metadata } from 'next';
 import { AboutSection } from '../components/AboutSection';
 import { TestimonialsSection } from '../components/TestimonialsSection';
+import { BlogSection } from '../components/BlogSection';
 import { BlackFooter } from '../components/BlackFooter';
-import { SectionFade } from '../components/SectionFade';
+import { BlackSpacer } from '../components/BlackSpacer';
 import { api, storageUrl } from '@/lib/api';
 
 export const metadata: Metadata = {
   title: 'About',
   description:
-    'About Atelier Lumina — the experimental gastronomy studio in Copenhagen, the team, and what guests say.',
+    'About Atelier Lumina — the experimental gastronomy studio in Copenhagen, the team, the journal, and what guests say.',
 };
 
-const FOREST = '#16201a';
-const OLIVE = '#0d130f';
-
 export default async function AboutPage() {
-  // Pull a curated subset for the AboutSection's crossfading background.
   const list = await api.images
-    .list({ status: 'published', page_size: 8 })
+    .list({ status: 'published', page_size: 12 })
     .catch(() => ({
       items: [],
       total: 0,
       page: 1,
-      page_size: 8,
+      page_size: 12,
       has_next: false,
     }));
 
@@ -31,14 +28,17 @@ export default async function AboutPage() {
     alt: img.alt_text,
   }));
 
+  const blogPool = list.items.slice(2, 10).map((img) => ({
+    src: storageUrl(img.storage_key),
+    alt: img.alt_text,
+  }));
+
   return (
     <main>
       <AboutSection slides={slides} />
-
-      <SectionFade from={FOREST} to={OLIVE} />
+      <BlogSection pool={blogPool} />
       <TestimonialsSection />
-
-      <SectionFade from={OLIVE} to="#0d130f" height="6rem" />
+      <BlackSpacer />
       <BlackFooter />
     </main>
   );

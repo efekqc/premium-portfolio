@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { Instagram, Twitter, Facebook, Menu } from 'lucide-react';
+import { Instagram, Facebook, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MobileSidebar } from './MobileSidebar';
 
@@ -21,7 +21,6 @@ const NAV: NavItem[] = [
 
 const SOCIAL = [
   { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
   { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
 ];
 

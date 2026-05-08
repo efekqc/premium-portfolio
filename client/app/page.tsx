@@ -1,19 +1,22 @@
-import { Hero, type HeroSlide } from './components/Hero';
-import { AboutSection } from './components/AboutSection';
-import { CarouselSection, type CarouselItem } from './components/CarouselSection';
+import { MenuPromoSection } from './components/MenuPromoSection';
+import { ReservationPromoSection } from './components/ReservationPromoSection';
+import { BlackSpacer } from './components/BlackSpacer';
+import { CarouselAboutPromo } from './components/CarouselAboutPromo';
+import { TestimonialsSection } from './components/TestimonialsSection';
+import { MapSection } from './components/MapSection';
 import { BlackFooter } from './components/BlackFooter';
-import { SectionFade } from './components/SectionFade';
+import type { CarouselItem } from './components/CarouselSection';
 import { api, storageUrl } from '@/lib/api';
 
-const FOREST = '#16201a';
-const SAND = '#ece8e1';
-
 /**
- * Homepage = minimalist showcase.
+ * Homepage — strict 6-section flow:
  *
- * Hero · brief About · Image Carousel · BlackFooter.
- * Menu, Testimonials, and Map have moved to dedicated routes
- * (/menu, /about, /contact respectively).
+ *   1. Intro / Menu Promo  (50/50 split, image left, text right → /menu)
+ *   2. Reservation Promo   (full-width darkened photo bg → /contact)
+ *   3. Pure-black spacer
+ *   4. Carousel + About Promo  (carousel on top, unified text + button → /about)
+ *   5. Testimonials with rounded muted cards
+ *   6. Map iframe + black footer
  */
 export default async function HomePage() {
   const [imageList, featuredList] = await Promise.all([
@@ -37,20 +40,8 @@ export default async function HomePage() {
       })),
   ]);
 
-  const heroSlides: HeroSlide[] = (
-    featuredList.items.length > 0 ? featuredList.items : imageList.items
-  )
-    .slice(0, 5)
-    .map((img) => ({
-      src: storageUrl(img.storage_key),
-      alt: img.alt_text,
-      dominantColor: img.dominant_color,
-    }));
-
-  const aboutSlides = imageList.items.slice(2, 6).map((img) => ({
-    src: storageUrl(img.storage_key),
-    alt: img.alt_text,
-  }));
+  const featured = featuredList.items[0] ?? imageList.items[0];
+  const reservationBg = featuredList.items[1] ?? imageList.items[1] ?? featured;
 
   const carouselItems: CarouselItem[] = imageList.items
     .slice(0, 12)
@@ -62,17 +53,37 @@ export default async function HomePage() {
 
   return (
     <>
-      <Hero slides={heroSlides} />
+      {/* SECTION 1 — Intro / Menu Promo */}
+      <MenuPromoSection
+        image={
+          featured
+            ? storageUrl(featured.storage_key)
+            : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1600&q=85'
+        }
+        alt={featured?.alt_text ?? 'Featured plate'}
+      />
 
-      <AboutSection slides={aboutSlides.length > 0 ? aboutSlides : heroSlides} />
+      {/* SECTION 2 — Reservation Promo */}
+      <ReservationPromoSection
+        bgImage={
+          reservationBg
+            ? storageUrl(reservationBg.storage_key)
+            : 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1800&q=80'
+        }
+        bgAlt={reservationBg?.alt_text ?? 'Atelier Lumina interior'}
+      />
 
-      <SectionFade from={FOREST} to={SAND} />
-      <CarouselSection items={carouselItems} />
+      {/* SECTION 3 — Pure-black spacer */}
+      <BlackSpacer />
 
-      <SectionFade from={SAND} to={FOREST} />
+      {/* SECTION 4 — Carousel + About Promo */}
+      <CarouselAboutPromo items={carouselItems} />
 
-      {/* Closing strip + minimal footer */}
-      <SectionFade from={FOREST} to="#0d130f" height="6rem" />
+      {/* SECTION 5 — Testimonials */}
+      <TestimonialsSection />
+
+      {/* SECTION 6 — Map + black footer */}
+      <MapSection />
       <BlackFooter />
     </>
   );

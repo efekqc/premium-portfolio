@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 import { AnimatePresence, motion } from 'framer-motion';
-import { X, Instagram, Twitter, Facebook } from 'lucide-react';
+import { X, Instagram, Facebook } from 'lucide-react';
 
 interface NavItem {
   label: string;
@@ -12,7 +12,6 @@ interface NavItem {
 
 const SOCIAL = [
   { icon: Instagram, href: 'https://instagram.com', label: 'Instagram' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter' },
   { icon: Facebook, href: 'https://facebook.com', label: 'Facebook' },
 ];
 

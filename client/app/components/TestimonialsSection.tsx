@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Star } from 'lucide-react';
 import { MagneticButton } from './MagneticButton';
+import { PersianTexture } from './PersianTexture';
 
 interface Review {
   quote: string;
@@ -58,13 +59,10 @@ export function TestimonialsSection() {
       id="testimonials"
       data-snap
       aria-label="Guest reviews"
-      className="relative isolate overflow-hidden bg-ink-950 py-28 sm:py-36 lg:py-44 px-5 sm:px-8 lg:px-12"
+      className="relative isolate overflow-hidden bg-ink-900 py-28 sm:py-36 lg:py-44 px-5 sm:px-8 lg:px-12"
     >
-      {/* Botanical leaf texture — subtle */}
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-30 opacity-[0.18]"
-      >
+      {/* Photographic / textured background */}
+      <div aria-hidden className="absolute inset-0 -z-30 opacity-[0.22]">
         <Image
           src="https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=2200&q=70"
           alt=""
@@ -75,12 +73,10 @@ export function TestimonialsSection() {
       </div>
       <div
         aria-hidden
-        className="absolute inset-0 -z-20 bg-gradient-to-b from-[#0e1612] via-[#0e1612]/85 to-[#0e1612]"
+        className="absolute inset-0 -z-20 bg-gradient-to-b from-ink-900/60 via-ink-900/85 to-ink-900"
       />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-noise opacity-[0.05] mix-blend-overlay"
-      />
+      {/* Persian motif on top of photo */}
+      <PersianTexture opacity={0.05} className="-z-10" />
 
       <div className="mx-auto max-w-7xl">
         {/* Heading */}
@@ -88,7 +84,10 @@ export function TestimonialsSection() {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.4 }}
-          variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
+          variants={{
+            hidden: {},
+            show: { transition: { staggerChildren: 0.1 } },
+          }}
           className="text-center mb-20 sm:mb-24"
         >
           <motion.div
@@ -110,22 +109,20 @@ export function TestimonialsSection() {
           </motion.h2>
         </motion.div>
 
-        {/* Cards */}
+        {/* Cards — heavily rounded, solid muted bg */}
         <div className="grid md:grid-cols-3 gap-6 lg:gap-10">
           {REVIEWS.map((review, i) => (
             <ReviewCard
               key={review.name}
               review={review}
-              offsetClass={
-                i === 1 ? 'md:translate-y-10 lg:translate-y-16' : ''
-              }
+              offsetClass={i === 1 ? 'md:translate-y-10 lg:translate-y-16' : ''}
               delay={i * 0.1}
             />
           ))}
         </div>
 
         {/* CTA */}
-        <div className="mt-28 sm:mt-32 flex justify-center">
+        <div className="mt-32 sm:mt-36 flex justify-center">
           <MagneticButton
             as="a"
             href="/contact"
@@ -133,7 +130,8 @@ export function TestimonialsSection() {
               group inline-flex items-center justify-center gap-2
               px-7 py-4 rounded-full
               bg-sand-100 text-ink-800 font-medium text-sm
-              hover:bg-sand-200 transition-colors
+              hover:bg-sand-200 hover:scale-[1.03]
+              transition-all duration-300
             "
           >
             Book Now
@@ -157,15 +155,19 @@ function ReviewCard({
     <motion.figure
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -6 }}
       viewport={{ once: true, amount: 0.25 }}
       transition={{ duration: 0.85, ease: [0.22, 1, 0.36, 1], delay }}
       className={`
         relative
-        bg-white/[0.04] backdrop-blur-md
-        border border-white/[0.07]
-        rounded-2xl
+        bg-ink-800
+        rounded-[2rem]
+        border border-accent/15
         p-8 pb-16 sm:p-10 sm:pb-20
-        shadow-[0_30px_60px_-30px_rgba(0,0,0,0.6)]
+        shadow-[0_30px_60px_-30px_rgba(0,0,0,0.7)]
+        transition-shadow duration-500
+        hover:shadow-[0_45px_90px_-30px_rgba(0,0,0,0.85)]
+        hover:border-accent/35
         ${offsetClass ?? ''}
       `}
     >
@@ -181,7 +183,6 @@ function ReviewCard({
         ))}
       </div>
 
-      {/* Decorative quote mark */}
       <span
         aria-hidden
         className="absolute top-5 right-7 font-display italic text-7xl leading-none text-accent/25 select-none"
@@ -196,19 +197,14 @@ function ReviewCard({
       </blockquote>
 
       {/* Avatar — overlapping bottom edge */}
-      <figcaption
-        className="
-          absolute -bottom-9 left-1/2 -translate-x-1/2
-          flex flex-col items-center
-        "
-      >
-        <span className="block h-[72px] w-[72px] rounded-full overflow-hidden ring-4 ring-[#0e1612] bg-ink-800">
+      <figcaption className="absolute -bottom-9 left-1/2 -translate-x-1/2 flex flex-col items-center">
+        <span className="group block h-[72px] w-[72px] rounded-full overflow-hidden ring-4 ring-ink-900 bg-ink-800">
           <Image
             src={review.avatar}
             alt={review.name}
             width={72}
             height={72}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
           />
         </span>
       </figcaption>

@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
-import { MenuSection } from '../components/MenuSection';
+import { MenuPageContent } from '../components/MenuPageContent';
 import { BlackFooter } from '../components/BlackFooter';
-import { SectionFade } from '../components/SectionFade';
+import { BlackSpacer } from '../components/BlackSpacer';
+import { api, storageUrl } from '@/lib/api';
 
 export const metadata: Metadata = {
   title: 'Menu',
@@ -9,11 +10,26 @@ export const metadata: Metadata = {
     "Tonight's selection at Atelier Lumina — soups, kebabs, pitas, desserts, and drinks from the experimental tasting room in Copenhagen.",
 };
 
-export default function MenuPage() {
+export default async function MenuPage() {
+  const list = await api.images
+    .list({ status: 'published', page_size: 30 })
+    .catch(() => ({
+      items: [],
+      total: 0,
+      page: 1,
+      page_size: 30,
+      has_next: false,
+    }));
+
+  const pool = list.items.map((img) => ({
+    src: storageUrl(img.storage_key),
+    alt: img.alt_text,
+  }));
+
   return (
     <main>
-      <MenuSection />
-      <SectionFade from="#16201a" to="#0d130f" height="6rem" />
+      <MenuPageContent pool={pool} />
+      <BlackSpacer />
       <BlackFooter />
     </main>
   );

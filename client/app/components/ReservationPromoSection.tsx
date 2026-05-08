@@ -53,7 +53,7 @@ export function ReservationPromoSection({ bgImage, bgAlt }: Props) {
         className="absolute inset-0 -z-20 bg-gradient-to-b from-ink-950/85 via-ink-950/70 to-ink-950/90"
       />
 
-      <PersianTexture opacity={0.05} className="-z-10" />
+      <PersianTexture className="-z-10" />
 
       <div className="relative mx-auto max-w-3xl px-5 sm:px-8 py-24 sm:py-32 text-center">
         <motion.div

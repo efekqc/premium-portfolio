@@ -76,7 +76,7 @@ export function TestimonialsSection() {
         className="absolute inset-0 -z-20 bg-gradient-to-b from-ink-900/60 via-ink-900/85 to-ink-900"
       />
       {/* Persian motif on top of photo */}
-      <PersianTexture opacity={0.05} className="-z-10" />
+      <PersianTexture className="-z-10" />
 
       <div className="mx-auto max-w-7xl">
         {/* Heading */}

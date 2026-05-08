@@ -20,7 +20,7 @@ export function ContactInfoBlock() {
       aria-label="Contact information"
       className="relative isolate overflow-hidden bg-ink-800 py-20 sm:py-28 px-5 sm:px-8 lg:px-12 scroll-mt-24"
     >
-      <PersianTexture opacity={0.04} />
+      <PersianTexture />
 
       <div className="relative mx-auto max-w-7xl">
         <motion.div

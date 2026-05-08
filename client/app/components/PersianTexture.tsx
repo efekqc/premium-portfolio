@@ -4,7 +4,7 @@
  * Place inside a `relative` parent.
  */
 interface Props {
-  /** 0–1; defaults to 0.04. */
+  /** 0–1; defaults to 0.13 — clearly visible while keeping text readable. */
   opacity?: number;
   /** Override tile size in px (default 80). */
   size?: number;
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export function PersianTexture({
-  opacity = 0.04,
+  opacity = 0.13,
   size = 80,
   className = '',
 }: Props) {

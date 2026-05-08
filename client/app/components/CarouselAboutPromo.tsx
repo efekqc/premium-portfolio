@@ -10,6 +10,7 @@ import { PersianTexture } from './PersianTexture';
 
 const CARD_WIDTH = 360;
 const CARD_GAP = 16;
+const AUTOPLAY_MS = 3500;
 
 const RISE = {
   hidden: { opacity: 0, y: 24 },
@@ -26,6 +27,7 @@ export function CarouselAboutPromo({ items }: { items: CarouselItem[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [dragWidth, setDragWidth] = useState(0);
   const [trackX, setTrackX] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     function measure() {
@@ -38,6 +40,25 @@ export function CarouselAboutPromo({ items }: { items: CarouselItem[] }) {
     return () => window.removeEventListener('resize', measure);
   }, [items.length]);
 
+  /**
+   * Auto-advance every AUTOPLAY_MS, pausing on hover, touch, or active
+   * drag.  Loops back to 0 once the track has been fully traversed.
+   * Disabled when the user prefers reduced motion or the carousel
+   * already fits the viewport (dragWidth === 0).
+   */
+  useEffect(() => {
+    if (prefersReducedMotion || isPaused || dragWidth === 0) return;
+    const id = setInterval(() => {
+      setTrackX((curr) => {
+        const next = curr - (CARD_WIDTH + CARD_GAP);
+        // Past the end → snap back to start.  framer-motion will animate
+        // the swing back via the existing spring transition.
+        return next < -dragWidth ? 0 : next;
+      });
+    }, AUTOPLAY_MS);
+    return () => clearInterval(id);
+  }, [isPaused, dragWidth, prefersReducedMotion]);
+
   function step(direction: 1 | -1) {
     const delta = (CARD_WIDTH + CARD_GAP) * direction;
     setTrackX((v) => Math.min(0, Math.max(-dragWidth, v - delta)));
@@ -49,12 +70,17 @@ export function CarouselAboutPromo({ items }: { items: CarouselItem[] }) {
       aria-label="Inside the studio"
       className="relative isolate overflow-hidden bg-ink-800"
     >
-      <PersianTexture opacity={0.04} />
+      <PersianTexture />
 
       {/* CAROUSEL ON TOP */}
       <div
         ref={containerRef}
         className="relative overflow-hidden pt-20 sm:pt-28 pb-10"
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+        onTouchStart={() => setIsPaused(true)}
+        onTouchEnd={() => setIsPaused(false)}
+        onTouchCancel={() => setIsPaused(false)}
       >
         <motion.div
           ref={trackRef}
@@ -62,6 +88,15 @@ export function CarouselAboutPromo({ items }: { items: CarouselItem[] }) {
           dragConstraints={{ left: -dragWidth, right: 0 }}
           dragElastic={0.05}
           dragTransition={{ bounceStiffness: 280, bounceDamping: 32 }}
+          onDragStart={() => setIsPaused(true)}
+          onDragEnd={(_, info) => {
+            // Sync trackX to the dragged-to position so the next auto-tick
+            // continues from where the user let go, then resume after a
+            // short settle.
+            const next = trackX + info.offset.x;
+            setTrackX(Math.min(0, Math.max(-dragWidth, next)));
+            setTimeout(() => setIsPaused(false), 800);
+          }}
           animate={prefersReducedMotion ? undefined : { x: trackX }}
           transition={{ type: 'spring', stiffness: 220, damping: 30 }}
           className="flex gap-4 px-5 sm:px-8 lg:px-12 cursor-grab active:cursor-grabbing"

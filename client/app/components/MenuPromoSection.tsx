@@ -29,7 +29,7 @@ export function MenuPromoSection({ image, alt }: Props) {
       className="relative isolate overflow-hidden bg-ink-800"
     >
       {/* Subtle Persian motif behind the content */}
-      <PersianTexture opacity={0.04} />
+      <PersianTexture />
 
       <div className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-20 sm:py-28 lg:py-36">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">

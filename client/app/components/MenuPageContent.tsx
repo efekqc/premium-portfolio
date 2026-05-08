@@ -122,7 +122,7 @@ export function MenuPageContent({ pool }: Props) {
 
   return (
     <div className="relative isolate bg-ink-800">
-      <PersianTexture opacity={0.03} />
+      <PersianTexture />
 
       {/* Page intro */}
       <section className="relative mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-20 sm:py-28 text-center">
@@ -174,8 +174,10 @@ export function MenuPageContent({ pool }: Props) {
 }
 
 function CategoryBlock({ cat, flip }: { cat: Category; flip: boolean }) {
+  // Intentionally NOT a snap target — the menu reads top-to-bottom.
+  // Five consecutive snap points would interrupt the reading flow.
   return (
-    <section data-snap aria-label={cat.title} className="scroll-mt-24">
+    <section aria-label={cat.title} className="scroll-mt-24">
       {/* Featured row — image + dishes list */}
       <div
         className={`grid lg:grid-cols-12 gap-10 lg:gap-16 items-center ${

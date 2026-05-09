@@ -5,7 +5,20 @@ import { motion } from 'framer-motion';
 
 export function BlackFooter() {
   return (
-    <footer className="bg-black border-t border-white/[0.04]">
+    <footer
+      className="bg-black border-t border-white/[0.04]"
+      /**
+       * scroll-snap-align: end keeps the footer aligned to the BOTTOM of
+       * the viewport instead of the top.  Critical because the footer is
+       * shorter than 100svh — without this, snap-mandatory tries to align
+       * a non-existent top-snap-point, so when the user reaches the page
+       * bottom the browser fights them and bounces back to the previous
+       * (taller) section.  With snap-end, the snap target is "footer
+       * bottom touches viewport bottom", which equals the absolute page
+       * bottom, so the user can rest there without being pulled away.
+       */
+      style={{ scrollSnapAlign: 'end', scrollSnapStop: 'normal' }}
+    >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12 py-12 sm:py-16">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

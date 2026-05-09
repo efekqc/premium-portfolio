@@ -21,14 +21,6 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
-    /**
-     * Strict mandatory snapping.  Every snap target is at least 100svh
-     * tall (see [data-snap] below + per-section min-h utilities) so the
-     * browser always lands at a section start.  scroll-snap-stop is left
-     * as `normal` so a strong scroll gesture can still pass through
-     * multiple sections.
-     */
-    scroll-snap-type: y mandatory;
   }
 
   body {
@@ -80,14 +72,6 @@
     height: 1px;
   }
 
-  /* Sections marked for snap — header offset is honoured automatically. */
-  [data-snap] {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
-    scroll-margin-top: var(--header-h);
-    min-height: 100svh;
-  }
-
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -98,7 +82,6 @@
     }
     html {
       scroll-behavior: auto;
-      scroll-snap-type: none;
     }
   }
 }

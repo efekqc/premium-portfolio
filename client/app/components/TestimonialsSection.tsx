@@ -57,7 +57,6 @@ export function TestimonialsSection() {
   return (
     <section
       id="testimonials"
-      data-snap
       aria-label="Guest reviews"
       className="relative isolate overflow-hidden bg-ink-900 py-28 sm:py-36 lg:py-44 px-5 sm:px-8 lg:px-12"
     >

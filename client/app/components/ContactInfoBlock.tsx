@@ -16,7 +16,6 @@ const RISE = {
 export function ContactInfoBlock() {
   return (
     <section
-      data-snap
       aria-label="Contact information"
       className="relative isolate overflow-hidden bg-ink-800 py-20 sm:py-28 px-5 sm:px-8 lg:px-12 scroll-mt-24"
     >

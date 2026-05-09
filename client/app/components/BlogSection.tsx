@@ -72,7 +72,6 @@ export function BlogSection({ pool }: Props) {
   return (
     <section
       id="journal"
-      data-snap
       aria-label="Blog · Journal"
       className="relative isolate overflow-hidden bg-ink-800 py-28 sm:py-36 lg:py-44 px-5 sm:px-8 lg:px-12 scroll-mt-24"
     >

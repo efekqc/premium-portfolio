@@ -43,7 +43,6 @@ export function CarouselSection({ items }: { items: CarouselItem[] }) {
   return (
     <section
       id="carousel"
-      data-snap
       aria-label="Inside the studio"
       className="relative bg-sand-100 text-sand-ink overflow-hidden"
     >

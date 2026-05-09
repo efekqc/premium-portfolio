@@ -24,7 +24,6 @@ const RISE = {
 export function ReservationPromoSection({ bgImage, bgAlt }: Props) {
   return (
     <section
-      data-snap
       aria-label="Reserve a table"
       className="relative isolate overflow-hidden min-h-[80vh] flex items-center"
     >

@@ -24,7 +24,6 @@ const RISE = {
 export function MenuPromoSection({ image, alt }: Props) {
   return (
     <section
-      data-snap
       aria-label="Tonight's menu"
       className="relative isolate overflow-hidden bg-ink-800"
     >

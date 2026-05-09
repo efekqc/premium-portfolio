@@ -165,7 +165,6 @@ export function MenuSection() {
   return (
     <section
       id="menu"
-      data-snap
       aria-label="Menu"
       className="relative bg-ink-800 py-24 sm:py-32 lg:py-40 px-5 sm:px-8 lg:px-12"
     >

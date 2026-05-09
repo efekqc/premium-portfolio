@@ -37,7 +37,6 @@ export function AboutSection({ slides = [] }: Props) {
   return (
     <section
       id="about"
-      data-snap
       aria-label="About Atelier Lumina"
       className="relative isolate overflow-hidden"
     >

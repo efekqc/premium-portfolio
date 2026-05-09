@@ -66,7 +66,6 @@ export function CarouselAboutPromo({ items }: { items: CarouselItem[] }) {
 
   return (
     <section
-      data-snap
       aria-label="Inside the studio"
       className="relative isolate overflow-hidden bg-ink-800"
     >

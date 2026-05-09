@@ -17,7 +17,6 @@ export default function ContactPage() {
     <main>
       {/* Reservation form is the primary focus — sits at the top */}
       <section
-        data-snap
         aria-label="Reservation"
         className="relative isolate overflow-hidden bg-ink-900 py-20 sm:py-28 px-5 sm:px-8 lg:px-12 scroll-mt-24"
       >
